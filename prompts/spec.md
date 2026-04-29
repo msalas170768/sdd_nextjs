@@ -1,0 +1,3 @@
+- User must see a summary of their latest invoices.
+- Clicking a row should navigate to a dynamic route /dashboard/invoices/[id].
+- Loading states must use React Suspense with skeleton loaders.

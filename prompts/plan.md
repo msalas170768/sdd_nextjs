@@ -1,0 +1,3 @@
+- Use Prisma as the ORM with a PostgreSQL database.
+- Implement authentication using Clerk or NextAuth.js.
+- Ensure all server actions are protected with middleware.
