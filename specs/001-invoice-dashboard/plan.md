@@ -13,7 +13,7 @@ are protected by Auth.js middleware, and all styling uses Tailwind CSS.
 ## Technical Context
 
 **Language/Version**: TypeScript 5.x (strict mode)
-**Primary Dependencies**: Next.js 15 (App Router), Prisma 5, Auth.js v5 (NextAuth), Tailwind CSS 3
+**Primary Dependencies**: Next.js 15 (App Router), Prisma 7, Auth.js v5 (NextAuth), Tailwind CSS 3, `pg` + `@prisma/adapter-pg` (driver adapter)
 **Storage**: PostgreSQL via Prisma ORM
 **Testing**: Playwright for e2e (if requested); TypeScript compiler as primary correctness gate
 **Target Platform**: Web — server-rendered, modern browsers
@@ -83,8 +83,9 @@ lib/
 └── invoices.ts                    # Typed data access functions
 
 prisma/
-└── schema.prisma                  # Invoice model + InvoiceStatus enum
+└── schema.prisma                  # Invoice model + InvoiceStatus enum (no url — Prisma 7)
 
+prisma.config.ts                   # Prisma 7 config: datasource.url for migrate commands
 middleware.ts                      # Auth.js route protection for /dashboard/*
 ```
 
