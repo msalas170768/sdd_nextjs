@@ -47,6 +47,17 @@ User record.
 ## Prisma Schema Fragment
 
 ```prisma
+// prisma/schema.prisma
+// Prisma 7: URL is NOT in schema — configured in prisma.config.ts
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
 enum InvoiceStatus {
   PAID
   PENDING
@@ -64,6 +75,8 @@ model Invoice {
   userId      String
   createdAt   DateTime      @default(now())
   updatedAt   DateTime      @updatedAt
+
+  user        User          @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([userId, createdAt(sort: Desc)])
 }

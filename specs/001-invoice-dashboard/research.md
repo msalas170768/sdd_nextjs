@@ -24,16 +24,27 @@ the component architecture is identical.
 
 ## ORM and Database
 
-**Decision**: Prisma 5 with PostgreSQL
+**Decision**: Prisma 7 with PostgreSQL via `@prisma/adapter-pg` driver adapter
 
-**Rationale**: Explicitly specified in `prompts/plan.md`. Prisma generates a fully typed client
-that satisfies Constitution Principle IV (strict TypeScript) without manual type mapping.
-The generated `Invoice` type can be used directly in Server Components. Prisma's `@db.Decimal`
-type maps cleanly to PostgreSQL `NUMERIC` for monetary amounts.
+**Rationale**: Explicitly specified in `prompts/plan.md`. Prisma 7 introduces a new
+configuration architecture: the database URL is no longer placed in `prisma/schema.prisma`
+but instead in `prisma.config.ts` (for `prisma db push` / migrate commands) and the runtime
+`PrismaClient` is initialized with a `Pool`-backed `PrismaPg` adapter in `lib/db.ts`.
+
+Prisma generates a fully typed client that satisfies Constitution Principle IV (strict
+TypeScript) without manual type mapping. Prisma's `@db.Decimal` type maps cleanly to
+PostgreSQL `NUMERIC` for monetary amounts.
+
+**Prisma 7 config split**:
+- `prisma.config.ts` — supplies `DATABASE_URL` for CLI operations (`prisma db push`, migrate)
+- `lib/db.ts` — creates a `Pool` → `PrismaPg` adapter → `PrismaClient({ adapter })` at runtime
+- `prisma/schema.prisma` — datasource block has only `provider = "postgresql"` (no `url`)
 
 **Alternatives considered**:
 - Drizzle ORM — lighter and also type-safe, but not requested.
 - Raw SQL (pg) — type safety requires manual work; violates the spirit of Principle IV.
+- Prisma 5 standard `PrismaClient` — does not align with the project's Prisma 7 dependency
+  and misses the new config architecture.
 
 ---
 

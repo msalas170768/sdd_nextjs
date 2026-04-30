@@ -26,7 +26,7 @@ testing of each story.
 
 - [X] T001 Initialize Next.js 15 project with App Router and set `"strict": true` in `tsconfig.json`
 - [X] T002 [P] Configure Tailwind CSS in `tailwind.config.ts` and set up `app/globals.css` with Tailwind directives
-- [X] T003 [P] Install Prisma 7 (`prisma@^7`, `@prisma/client@^7`, `@prisma/adapter-pg@^7`, `pg`), initialize `prisma/schema.prisma` **without** a `url` in the datasource block, create `prisma.config.ts` using `defineConfig({ datasource: { url: process.env.DATABASE_URL } })` (supplies the URL to migrate commands), and configure `DATABASE_URL` in `.env.local`
+- [X] T003 [P] Install Prisma 7 (`prisma@^7.3`, `@prisma/client@^7.3`, `@prisma/adapter-pg@^7.3`, `pg@^8.13`, `@types/pg`), initialize `prisma/schema.prisma` **without** `url` in the datasource block, create `prisma.config.ts` with `defineConfig({ datasource: { url: process.env.DATABASE_URL } })` for migrate/push commands, and configure `DATABASE_URL` in `.env.local`
 - [X] T004 [P] Install Auth.js v5 (`next-auth@beta`) and add `AUTH_SECRET` and `AUTH_URL` to `.env.local`
 
 ---
@@ -38,8 +38,8 @@ testing of each story.
 **⚠️ CRITICAL**: No user story work can begin until this phase is complete.
 
 - [X] T005 Define `InvoiceSummary` and `InvoiceDetail` TypeScript interfaces in `lib/invoices.ts` per `contracts/data-access.md`
-- [X] T006 [P] Add `InvoiceStatus` enum (PAID, PENDING, OVERDUE) and `Invoice` model with composite index `(userId, createdAt DESC)` to `prisma/schema.prisma` — datasource block has `provider = "postgresql"` only (no `url`; URL is supplied via `prisma.config.ts`)
-- [X] T007 Create Prisma client singleton in `lib/db.ts` that constructs a `Pool` from `process.env.DATABASE_URL`, wraps it in `PrismaPg` adapter, passes the adapter to `new PrismaClient({ adapter })`, and re-uses the instance across hot reloads in development
+- [X] T006 [P] Add `InvoiceStatus` enum (PAID, PENDING, OVERDUE) and `Invoice` model with composite index `(userId, createdAt DESC)` to `prisma/schema.prisma` — datasource block uses only `provider = "postgresql"` (no `url`; Prisma 7 reads the URL from `prisma.config.ts`)
+- [X] T007 Create Prisma client singleton in `lib/db.ts` — creates a `Pool` from `DATABASE_URL`, wraps it in `PrismaPg` adapter, passes the adapter to `new PrismaClient({ adapter })`, and re-uses the instance across hot reloads via `globalThis`
 - [X] T008 Configure Auth.js v5 in `lib/auth.ts` with Prisma adapter pointing to `lib/db.ts` for session storage
 - [X] T009 Create Auth.js catch-all API route in `app/api/auth/[...nextauth]/route.ts` exporting GET and POST handlers from Auth.js
 - [X] T010 [P] Create login page in `app/login/page.tsx` with a sign-in button that calls Auth.js `signIn()` (Client Component — requires `"use client"`)
