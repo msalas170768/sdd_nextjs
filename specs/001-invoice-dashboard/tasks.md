@@ -24,10 +24,10 @@ testing of each story.
 
 **Purpose**: Project initialization and configuration of the full technology stack.
 
-- [ ] T001 Initialize Next.js 15 project with App Router and set `"strict": true` in `tsconfig.json`
-- [ ] T002 [P] Configure Tailwind CSS in `tailwind.config.ts` and set up `app/globals.css` with Tailwind directives
-- [ ] T003 [P] Install Prisma 5, initialize `prisma/schema.prisma`, and configure `DATABASE_URL` in `.env.local`
-- [ ] T004 [P] Install Auth.js v5 (`next-auth@beta`) and add `AUTH_SECRET` and `AUTH_URL` to `.env.local`
+- [X] T001 Initialize Next.js 15 project with App Router and set `"strict": true` in `tsconfig.json`
+- [X] T002 [P] Configure Tailwind CSS in `tailwind.config.ts` and set up `app/globals.css` with Tailwind directives
+- [X] T003 [P] Install Prisma 7 (`prisma@^7`, `@prisma/client@^7`, `@prisma/adapter-pg@^7`, `pg`), initialize `prisma/schema.prisma` **without** a `url` in the datasource block, create `prisma.config.ts` using `defineConfig({ datasource: { url: process.env.DATABASE_URL } })` (supplies the URL to migrate commands), and configure `DATABASE_URL` in `.env.local`
+- [X] T004 [P] Install Auth.js v5 (`next-auth@beta`) and add `AUTH_SECRET` and `AUTH_URL` to `.env.local`
 
 ---
 
@@ -37,13 +37,13 @@ testing of each story.
 
 **⚠️ CRITICAL**: No user story work can begin until this phase is complete.
 
-- [ ] T005 Define `InvoiceSummary` and `InvoiceDetail` TypeScript interfaces in `lib/invoices.ts` per `contracts/data-access.md`
-- [ ] T006 [P] Add `InvoiceStatus` enum (PAID, PENDING, OVERDUE) and `Invoice` model with composite index `(userId, createdAt DESC)` to `prisma/schema.prisma`
-- [ ] T007 Create Prisma client singleton in `lib/db.ts` that re-uses the client across hot reloads in development
-- [ ] T008 Configure Auth.js v5 in `lib/auth.ts` with Prisma adapter pointing to `lib/db.ts` for session storage
-- [ ] T009 Create Auth.js catch-all API route in `app/api/auth/[...nextauth]/route.ts` exporting GET and POST handlers from Auth.js
-- [ ] T010 [P] Create login page in `app/login/page.tsx` with a sign-in button that calls Auth.js `signIn()` (Client Component — requires `"use client"`)
-- [ ] T011 Implement `middleware.ts` at the repository root that re-exports `auth` from `lib/auth.ts` as `middleware` with matcher `['/dashboard/:path*']`
+- [X] T005 Define `InvoiceSummary` and `InvoiceDetail` TypeScript interfaces in `lib/invoices.ts` per `contracts/data-access.md`
+- [X] T006 [P] Add `InvoiceStatus` enum (PAID, PENDING, OVERDUE) and `Invoice` model with composite index `(userId, createdAt DESC)` to `prisma/schema.prisma` — datasource block has `provider = "postgresql"` only (no `url`; URL is supplied via `prisma.config.ts`)
+- [X] T007 Create Prisma client singleton in `lib/db.ts` that constructs a `Pool` from `process.env.DATABASE_URL`, wraps it in `PrismaPg` adapter, passes the adapter to `new PrismaClient({ adapter })`, and re-uses the instance across hot reloads in development
+- [X] T008 Configure Auth.js v5 in `lib/auth.ts` with Prisma adapter pointing to `lib/db.ts` for session storage
+- [X] T009 Create Auth.js catch-all API route in `app/api/auth/[...nextauth]/route.ts` exporting GET and POST handlers from Auth.js
+- [X] T010 [P] Create login page in `app/login/page.tsx` with a sign-in button that calls Auth.js `signIn()` (Client Component — requires `"use client"`)
+- [X] T011 Implement `middleware.ts` at the repository root that re-exports `auth` from `lib/auth.ts` as `middleware` with matcher `['/dashboard/:path*']`
 - [ ] T012 Run `npx prisma db push` to apply the Invoice schema to the PostgreSQL database (requires T006, T007)
 
 **Checkpoint**: Foundation ready — all user story phases can begin.
@@ -60,10 +60,10 @@ when no invoices exist. Unauthenticated access redirects to `/login`.
 
 ### Implementation for User Story 1
 
-- [ ] T013 [US1] Implement `getInvoices(userId: string): Promise<InvoiceSummary[]>` in `lib/invoices.ts` — query Prisma for the 20 most recent invoices by `issuedAt DESC` scoped to `userId`, serialize `Decimal` amount to string
-- [ ] T014 [P] [US1] Create `InvoiceRow` component in `components/invoices/InvoiceRow.tsx` — typed `InvoiceRowProps`, renders one `<tr>` with `<Link href={/dashboard/invoices/${invoice.id}}>` wrapping a clickable row
-- [ ] T015 [P] [US1] Create `InvoiceTable` component in `components/invoices/InvoiceTable.tsx` — typed `InvoiceTableProps`, renders a `<table>` with header columns (ID, Amount, Status, Due Date, Issued) and maps invoices to `InvoiceRow`
-- [ ] T016 [US1] Create `app/dashboard/invoices/page.tsx` as an `async` Server Component — call `auth()` for session, call `getInvoices(session.user.id)`, render `InvoiceTable` if invoices exist or an empty-state `<p>` if the array is empty
+- [X] T013 [US1] Implement `getInvoices(userId: string): Promise<InvoiceSummary[]>` in `lib/invoices.ts` — query Prisma for the 20 most recent invoices by `issuedAt DESC` scoped to `userId`, serialize `Decimal` amount to string
+- [X] T014 [P] [US1] Create `InvoiceRow` component in `components/invoices/InvoiceRow.tsx` — typed `InvoiceRowProps`, renders one `<tr>` with `<Link href={/dashboard/invoices/${invoice.id}}>` wrapping a clickable row
+- [X] T015 [P] [US1] Create `InvoiceTable` component in `components/invoices/InvoiceTable.tsx` — typed `InvoiceTableProps`, renders a `<table>` with header columns (ID, Amount, Status, Due Date, Issued) and maps invoices to `InvoiceRow`
+- [X] T016 [US1] Create `app/dashboard/invoices/page.tsx` as an `async` Server Component — call `auth()` for session, call `getInvoices(session.user.id)`, render `InvoiceTable` if invoices exist or an empty-state `<p>` if the array is empty
 
 **Checkpoint**: User Story 1 is fully functional and independently testable. This is the MVP.
 
@@ -79,9 +79,9 @@ Entering a random or unowned ID returns the Next.js 404 page.
 
 ### Implementation for User Story 2
 
-- [ ] T017 [US2] Implement `getInvoiceById(invoiceId: string, userId: string): Promise<InvoiceDetail | null>` in `lib/invoices.ts` — query Prisma by `id` AND `userId`, return `null` if not found or ownership mismatch, serialize Decimal and Date fields
-- [ ] T018 [P] [US2] Create `InvoiceDetail` component in `components/invoices/InvoiceDetail.tsx` — typed `InvoiceDetailProps`, renders all `InvoiceDetail` fields in a structured layout using Tailwind utility classes
-- [ ] T019 [US2] Create `app/dashboard/invoices/[id]/page.tsx` as an `async` Server Component — call `auth()` for session, call `getInvoiceById(params.id, session.user.id)`, call `notFound()` if result is `null`, render `InvoiceDetail` with the returned data
+- [X] T017 [US2] Implement `getInvoiceById(invoiceId: string, userId: string): Promise<InvoiceDetail | null>` in `lib/invoices.ts` — query Prisma by `id` AND `userId`, return `null` if not found or ownership mismatch, serialize Decimal and Date fields
+- [X] T018 [P] [US2] Create `InvoiceDetail` component in `components/invoices/InvoiceDetail.tsx` — typed `InvoiceDetailProps`, renders all `InvoiceDetail` fields in a structured layout using Tailwind utility classes
+- [X] T019 [US2] Create `app/dashboard/invoices/[id]/page.tsx` as an `async` Server Component — call `auth()` for session, call `getInvoiceById(params.id, session.user.id)`, call `notFound()` if result is `null`, render `InvoiceDetail` with the returned data
 
 **Checkpoint**: User Stories 1 and 2 are independently functional. Rows link to working detail pages.
 
@@ -98,10 +98,10 @@ Same test on `/dashboard/invoices/[id]` shows a detail skeleton.
 
 ### Implementation for User Story 3
 
-- [ ] T020 [P] [US3] Create `InvoiceListSkeleton` component in `components/invoices/InvoiceListSkeleton.tsx` — renders a table-shaped skeleton using Tailwind `animate-pulse` and `bg-gray-200 rounded` classes; include 5 placeholder rows matching the `InvoiceTable` column count
-- [ ] T021 [P] [US3] Create `InvoiceDetailSkeleton` component in `components/invoices/InvoiceDetailSkeleton.tsx` — renders a detail-shaped skeleton using Tailwind `animate-pulse` and `bg-gray-200 rounded` classes matching the `InvoiceDetail` field layout
-- [ ] T022 [US3] Create `app/dashboard/invoices/loading.tsx` that default-exports `InvoiceListSkeleton` — this file is App Router's automatic Suspense fallback for the list page
-- [ ] T023 [US3] Create `app/dashboard/invoices/[id]/loading.tsx` that default-exports `InvoiceDetailSkeleton` — this file is App Router's automatic Suspense fallback for the detail page
+- [X] T020 [P] [US3] Create `InvoiceListSkeleton` component in `components/invoices/InvoiceListSkeleton.tsx` — renders a table-shaped skeleton using Tailwind `animate-pulse` and `bg-gray-200 rounded` classes; include 5 placeholder rows matching the `InvoiceTable` column count
+- [X] T021 [P] [US3] Create `InvoiceDetailSkeleton` component in `components/invoices/InvoiceDetailSkeleton.tsx` — renders a detail-shaped skeleton using Tailwind `animate-pulse` and `bg-gray-200 rounded` classes matching the `InvoiceDetail` field layout
+- [X] T022 [US3] Create `app/dashboard/invoices/loading.tsx` that default-exports `InvoiceListSkeleton` — this file is App Router's automatic Suspense fallback for the list page
+- [X] T023 [US3] Create `app/dashboard/invoices/[id]/loading.tsx` that default-exports `InvoiceDetailSkeleton` — this file is App Router's automatic Suspense fallback for the detail page
 
 **Checkpoint**: All three user stories are independently functional. Skeleton loaders appear on
 both routes during data fetching.
@@ -112,11 +112,11 @@ both routes during data fetching.
 
 **Purpose**: Error boundaries, final validation, and constitution compliance verification.
 
-- [ ] T024 [P] Create `app/dashboard/invoices/error.tsx` — Client Component (`"use client"`) error boundary displaying a user-friendly message when the invoice list page throws (e.g., database unreachable)
-- [ ] T025 [P] Create `app/dashboard/invoices/[id]/error.tsx` — Client Component (`"use client"`) error boundary for the invoice detail page
-- [ ] T026 Verify TypeScript compilation: run `npx tsc --noEmit` and confirm zero errors under strict mode
+- [X] T024 [P] Create `app/dashboard/invoices/error.tsx` — Client Component (`"use client"`) error boundary displaying a user-friendly message when the invoice list page throws (e.g., database unreachable)
+- [X] T025 [P] Create `app/dashboard/invoices/[id]/error.tsx` — Client Component (`"use client"`) error boundary for the invoice detail page
+- [X] T026 Verify TypeScript compilation: run `npx tsc --noEmit` and confirm zero errors under strict mode
 - [ ] T027 [P] Run the quickstart.md validation checklist end-to-end against the running development server
-- [ ] T028 [P] Confirm constitution compliance: no `pages/` directory, no `.module.css` files, no `any` types, no `next/router` imports, no inline `style` props in any source file
+- [X] T028 [P] Confirm constitution compliance: no `pages/` directory, no `.module.css` files, no `any` types, no `next/router` imports, no inline `style` props in any source file
 
 ---
 
