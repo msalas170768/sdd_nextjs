@@ -6,15 +6,17 @@
 
 **Decision**: Shadcn/ui
 
-**Rationale**: Shadcn/ui components are built on Radix UI primitives styled exclusively with
-Tailwind CSS — fully compatible with Constitution Principle III (Tailwind only). Components
-are copied into the project (`components/ui/`) rather than installed as an opaque package,
-giving full control over styling. Shadcn's `<Form>`, `<Input>`, `<Select>`, and `<Button>`
-components integrate natively with React Hook Form via `FormField`/`FormControl` wrappers.
+**Rationale**: Shadcn/ui components (style `base-nova`) are built on `@base-ui/react`
+primitives (replacing Radix UI) styled exclusively with Tailwind CSS 4 — fully compatible
+with Constitution Principle III (Tailwind only). Components are copied into the project
+(`components/ui/`) rather than installed as an opaque package, giving full control over
+styling. Shadcn's `<Form>`, `<Input>`, and `<Button>` components integrate natively with
+React Hook Form via `FormField`/`FormControl` wrappers. **Note**: `@base-ui/react` Button has
+no `asChild` prop — use `buttonVariants` classes directly on `<Link>` elements instead.
 
 **Alternatives considered**:
 - Raw HTML inputs + Tailwind — functional but duplicates what Shadcn already provides.
-- Radix UI directly without Shadcn — more configuration; Shadcn adds the Tailwind layer.
+- Radix UI directly — replaced by `@base-ui/react` in the `base-nova` style; Shadcn adds the Tailwind 4 layer.
 
 **Setup**: `npx shadcn@latest init` followed by `npx shadcn@latest add form input select
 button alert-dialog label textarea`.
@@ -23,7 +25,7 @@ button alert-dialog label textarea`.
 
 ## Form State & Validation
 
-**Decision**: React Hook Form v7 + Zod v3 via `@hookform/resolvers`
+**Decision**: React Hook Form v7 + Zod v4 via `@hookform/resolvers`
 
 **Rationale**: `useForm` from React Hook Form manages controlled form state with minimal
 re-renders, required for the Client Component `CrudInvoice`. Zod provides runtime validation
@@ -32,12 +34,13 @@ AND generates TypeScript types (`z.infer<typeof schema>`), satisfying Constituti
 **Zod version for complex numeric and date validations**:
 
 - **Numeric (amount)**: `z.coerce.number().positive()` — coerces the HTML string input to a
-  number before validation. Available since Zod v3.20.
+  number before validation.
 - **Date (dueDate, issuedAt)**: `z.coerce.date()` — parses `YYYY-MM-DD` strings from HTML
-  `<input type="date">` into `Date` objects. Available since Zod v3.20.
+  `<input type="date">` into `Date` objects.
 - **Enum (status)**: `z.enum(['PAID', 'PENDING', 'OVERDUE'])` — generates union type.
-- **Minimum recommended version**: **Zod 3.22+** for stable `z.coerce.*` and `.pipe()`
-  chaining. Current latest stable (3.24.x) recommended.
+- **Version**: Zod v4 is installed. **Resolver type cast required**: `z.coerce.*` fields
+  produce `unknown` input types in Zod v4, causing a `Resolver` type mismatch with
+  `react-hook-form`. Fix: `zodResolver(schema) as Resolver<InvoiceFormValues>`.
 
 **Alternatives considered**:
 - Yup — less TypeScript-native; `z.infer` is more ergonomic.

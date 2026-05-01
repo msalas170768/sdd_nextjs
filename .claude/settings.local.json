@@ -1,0 +1,7 @@
+{
+  "permissions": {
+    "allow": [
+      "PowerShell(cd \"d:\\\\Marcelo\\\\REACT\\\\sdd_nextjs\" ; $env:SPECIFY_FEATURE = \"001-invoice-dashboard\" ; .\\\\.specify\\\\scripts\\\\powershell\\\\check-prerequisites.ps1 -Json -RequireTasks -IncludeTasks 2>&1)"
+    ]
+  }
+}

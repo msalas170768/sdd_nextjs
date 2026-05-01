@@ -14,8 +14,8 @@ confirmation for deletion, and three Next.js Server Actions (`createInvoice`, `u
 ## Technical Context
 
 **Language/Version**: TypeScript 5.x (strict mode)  
-**Primary Dependencies**: Next.js 15 (App Router), Prisma 7, Auth.js v5, Tailwind CSS 3,
-Shadcn/ui (Radix UI + Tailwind), React Hook Form v7, Zod 3.22+, SweetAlert2, `@hookform/resolvers`  
+**Primary Dependencies**: Next.js 15 (App Router), Prisma 7, Auth.js v5, Tailwind CSS 4 (`@tailwindcss/postcss`),
+Shadcn/ui (base-nova: `@base-ui/react` + Tailwind 4), React Hook Form v7, Zod v4, SweetAlert2, `@hookform/resolvers`  
 **Storage**: PostgreSQL via Prisma ORM (no schema changes — existing `Invoice` model)  
 **Testing**: TypeScript compiler as primary correctness gate; manual smoke test per quickstart.md  
 **Target Platform**: Web — server-rendered with Client Component islands for form interactivity  
@@ -97,4 +97,4 @@ Client Component form (`zodResolver`).
 
 | Violation | Why Needed | Simpler Alternative Rejected Because |
 |-----------|------------|-------------------------------------|
-| SweetAlert2 bundled CSS (Principle III exception) | Explicitly required in `prompts/plan2.md`; provides accessible, well-tested confirmation dialog with minimal setup | Shadcn `<AlertDialog>` is Tailwind-compliant but adding it requires Radix Dialog primitive already included by Shadcn setup — viable drop-in replacement if SweetAlert2 is later removed; `window.confirm()` is not accessible |
+| SweetAlert2 bundled CSS (Principle III exception) | Explicitly required in `prompts/plan2.md`; provides accessible, well-tested confirmation dialog with minimal setup | Shadcn `<AlertDialog>` is Tailwind-compliant but uses `@base-ui/react` Dialog primitive in the `base-nova` style — viable drop-in replacement if SweetAlert2 is later removed; `window.confirm()` is not accessible |

@@ -1,5 +1,6 @@
 import Link from 'next/link'
 import type { InvoiceSummary } from '@/lib/invoices'
+import InvoiceActionsCell from './InvoiceActionsCell'
 
 interface InvoiceRowProps {
   invoice: InvoiceSummary
@@ -37,6 +38,9 @@ export default function InvoiceRow({ invoice }: InvoiceRowProps) {
       </td>
       <td className="px-4 py-3 text-sm text-gray-600">
         {new Date(invoice.issuedAt).toLocaleDateString()}
+      </td>
+      <td className="px-4 py-3">
+        <InvoiceActionsCell invoiceId={invoice.id} invoiceStatus={invoice.status} />
       </td>
     </tr>
   )

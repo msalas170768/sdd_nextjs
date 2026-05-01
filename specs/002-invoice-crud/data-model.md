@@ -45,7 +45,7 @@ export const invoiceSchema = z.object({
 export type InvoiceFormValues = z.infer<typeof invoiceSchema>
 ```
 
-**Zod version requirement**: Zod 3.22+ for stable `z.coerce.number()` and `z.coerce.date()`.
+**Zod version**: Zod v4. `z.coerce.*` fields produce `unknown` input type — use resolver cast `zodResolver(schema) as Resolver<InvoiceFormValues>` in `useForm`.
 
 ## State Transitions
 

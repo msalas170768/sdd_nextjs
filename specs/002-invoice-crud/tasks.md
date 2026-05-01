@@ -18,10 +18,10 @@
 
 **Purpose**: Install libraries required by this feature before any component work begins
 
-- [ ] T001 Run `npx shadcn@latest init` and `npx shadcn@latest add form input select button label textarea` — copies Shadcn components into `components/ui/`
-- [ ] T002 [P] Run `npm install sweetalert2` — SweetAlert2 for deletion confirmation dialog
-- [ ] T003 [P] Run `npm install @hookform/resolvers` — Zod resolver bridge for React Hook Form
-- [ ] T004 [P] Verify `zod@3.22+` is installed (`npm ls zod`); run `npm install zod@latest` if below 3.22
+- [X] T001 Run `npx shadcn@latest init` and `npx shadcn@latest add form input select button label textarea` — copies Shadcn components into `components/ui/`
+- [X] T002 [P] Run `npm install sweetalert2` — SweetAlert2 for deletion confirmation dialog
+- [X] T003 [P] Run `npm install @hookform/resolvers` — Zod resolver bridge for React Hook Form
+- [X] T004 [P] Verify `zod@4.x` is installed (`npm ls zod`); run `npm install zod@latest` if below v4
 
 **Checkpoint**: All libraries installed — `npm ls react-hook-form zod sweetalert2 @hookform/resolvers` shows correct versions
 
@@ -33,8 +33,8 @@
 
 **⚠️ CRITICAL**: No user story work can begin until this phase is complete
 
-- [ ] T005 Create `lib/validations/invoice.ts` — `invoiceSchema` (Zod object with `z.coerce.number().positive()` for amount, `z.coerce.date()` for dueDate/issuedAt, `z.enum` for status) and `InvoiceFormValues` type via `z.infer`
-- [ ] T006 Create `lib/actions/invoices.ts` — file with `'use server'` directive and stub exports for `createInvoice`, `updateInvoice`, and `deleteInvoice` (each returns `{ error: 'not implemented' }` initially); stubs satisfy TypeScript import resolution for all story phases
+- [X] T005 Create `lib/validations/invoice.ts` — `invoiceSchema` (Zod object with `z.coerce.number().positive()` for amount, `z.coerce.date()` for dueDate/issuedAt, `z.enum` for status) and `InvoiceFormValues` type via `z.infer`
+- [X] T006 Create `lib/actions/invoices.ts` — file with `'use server'` directive and stub exports for `createInvoice`, `updateInvoice`, and `deleteInvoice` (each returns `{ error: 'not implemented' }` initially); stubs satisfy TypeScript import resolution for all story phases
 
 **Checkpoint**: Foundation ready — `lib/validations/invoice.ts` and `lib/actions/invoices.ts` exist with correct exports; TypeScript compiles without errors
 
@@ -48,10 +48,10 @@
 
 ### Implementation for User Story 1
 
-- [ ] T007 [US1] Implement `createInvoice` in `lib/actions/invoices.ts` — parse `InvoiceFormValues` with `invoiceSchema.parse()`, read `userId` from `auth()` session, call `db.invoice.create(...)`, then `revalidatePath('/dashboard/invoices')` and `redirect('/dashboard/invoices')`; on Prisma error return `{ error: message }`
-- [ ] T008 [US1] Create `components/invoices/CrudInvoice.tsx` — `"use client"` component accepting `invoice?: CrudInvoiceProps['invoice']`; `useForm<InvoiceFormValues>` with `zodResolver(invoiceSchema)`; `useTransition` wraps Server Action call; Shadcn `<Form>`, `<Input>`, `<Select>`, `<Textarea>` fields for all six editable Invoice fields; Aceptar button disabled during `isPending`; Cancelar button links to `/dashboard/invoices`; display `{ error }` from Server Action in a Shadcn `<Alert>` below the form
-- [ ] T009 [US1] Create `app/dashboard/create_invoice/page.tsx` — async Server Component; call `auth()` and redirect to `/login` if unauthenticated; render `<CrudInvoice />` with no `invoice` prop (create mode)
-- [ ] T010 [US1] Add "Add Invoice" `<Link>` button to `app/dashboard/invoices/page.tsx` — positioned above the invoice table, navigates to `/dashboard/create_invoice`; styled with Tailwind as a primary button
+- [X] T007 [US1] Implement `createInvoice` in `lib/actions/invoices.ts` — parse `InvoiceFormValues` with `invoiceSchema.parse()`, read `userId` from `auth()` session, call `db.invoice.create(...)`, then `revalidatePath('/dashboard/invoices')` and `redirect('/dashboard/invoices')`; on Prisma error return `{ error: message }`
+- [X] T008 [US1] Create `components/invoices/CrudInvoice.tsx` — `"use client"` component accepting `invoice?: CrudInvoiceProps['invoice']`; `useForm<InvoiceFormValues>` with `zodResolver(invoiceSchema)`; `useTransition` wraps Server Action call; Shadcn `<Form>`, `<Input>`, `<Select>`, `<Textarea>` fields for all six editable Invoice fields; Aceptar button disabled during `isPending`; Cancelar button links to `/dashboard/invoices`; display `{ error }` from Server Action in a Shadcn `<Alert>` below the form
+- [X] T009 [US1] Create `app/dashboard/create_invoice/page.tsx` — async Server Component; call `auth()` and redirect to `/login` if unauthenticated; render `<CrudInvoice />` with no `invoice` prop (create mode)
+- [X] T010 [US1] Add "Add Invoice" `<Link>` button to `app/dashboard/invoices/page.tsx` — positioned above the invoice table, navigates to `/dashboard/create_invoice`; styled with Tailwind as a primary button
 
 **Checkpoint**: User Story 1 fully functional — create flow works end-to-end; validation errors surface inline; duplicate Aceptar clicks are blocked by disabled state
 
@@ -65,10 +65,10 @@
 
 ### Implementation for User Story 4
 
-- [ ] T011 [US4] Create `components/invoices/InvoiceActionsCell.tsx` — `"use client"` component accepting `{ invoiceId: string; invoiceStatus: 'PAID' | 'PENDING' | 'OVERDUE' }`; renders three icon buttons using Shadcn `<Button variant="ghost" size="icon">`; View icon wraps `<Link href={/dashboard/invoices/${invoiceId}}>`, Edit icon wraps `<Link href={/dashboard/update_invoice/${invoiceId}}>`, Delete icon is `disabled` when `invoiceStatus !== 'PENDING'` (placeholder `onClick` with no-op for now — wired in US3)
-- [ ] T012 [P] [US4] Modify `components/invoices/InvoiceRow.tsx` (or equivalent list row component) to import and render `<InvoiceActionsCell invoiceId={invoice.id} invoiceStatus={invoice.status} />` in a new table cell at the end of each row
-- [ ] T013 [P] [US4] Modify `components/invoices/InvoiceTable.tsx` (or equivalent) to add an "Options" header column aligned with the new cell added in T012
-- [ ] T014 [US4] Verify the `invoiceStatus` field is included in the Prisma select query in `lib/data/invoices.ts` (or wherever list data is fetched) — add `status` to the select if missing so `InvoiceActionsCell` receives it
+- [X] T011 [US4] Create `components/invoices/InvoiceActionsCell.tsx` — `"use client"` component accepting `{ invoiceId: string; invoiceStatus: 'PAID' | 'PENDING' | 'OVERDUE' }`; renders three icon buttons using Shadcn `<Button variant="ghost" size="icon">`; View icon wraps `<Link href={/dashboard/invoices/${invoiceId}}>`, Edit icon wraps `<Link href={/dashboard/update_invoice/${invoiceId}}>`, Delete icon is `disabled` when `invoiceStatus !== 'PENDING'` (placeholder `onClick` with no-op for now — wired in US3)
+- [X] T012 [P] [US4] Modify `components/invoices/InvoiceRow.tsx` (or equivalent list row component) to import and render `<InvoiceActionsCell invoiceId={invoice.id} invoiceStatus={invoice.status} />` in a new table cell at the end of each row
+- [X] T013 [P] [US4] Modify `components/invoices/InvoiceTable.tsx` (or equivalent) to add an "Options" header column aligned with the new cell added in T012
+- [X] T014 [US4] Verify the `invoiceStatus` field is included in the Prisma select query in `lib/data/invoices.ts` (or wherever list data is fetched) — add `status` to the select if missing so `InvoiceActionsCell` receives it
 
 **Checkpoint**: Options column visible on all rows; View and Edit icons navigate correctly; Delete icon visually disabled on PAID/OVERDUE invoices; TypeScript compiles with no `any`
 
@@ -82,9 +82,9 @@
 
 ### Implementation for User Story 2
 
-- [ ] T015 [US2] Implement `updateInvoice(id: string, data: InvoiceFormValues)` in `lib/actions/invoices.ts` — parse with `invoiceSchema.parse()`, verify invoice belongs to session user via `db.invoice.findFirst({ where: { id, userId } })` (return `{ error }` if not found), call `db.invoice.update(...)`, then `revalidatePath` + `redirect`; on Prisma error return `{ error: message }`
-- [ ] T016 [US2] Create `app/dashboard/update_invoice/[id]/page.tsx` — async Server Component; call `auth()` and redirect to `/login` if unauthenticated; fetch invoice with `db.invoice.findFirst({ where: { id: params.id, userId: session.user.id } })`; call `notFound()` if not found; convert `invoice.amount` from Prisma `Decimal` to `number` before passing; render `<CrudInvoice invoice={...} />` (edit mode — component pre-populates fields from prop via `defaultValues`)
-- [ ] T017 [US2] Extend `CrudInvoice.tsx` to handle edit mode — when `invoice` prop is present, pass `defaultValues` to `useForm` from the invoice prop; bind `updateInvoice(invoice.id, data)` as the submit handler in edit mode and `createInvoice(data)` in create mode; no additional UI changes required
+- [X] T015 [US2] Implement `updateInvoice(id: string, data: InvoiceFormValues)` in `lib/actions/invoices.ts` — parse with `invoiceSchema.parse()`, verify invoice belongs to session user via `db.invoice.findFirst({ where: { id, userId } })` (return `{ error }` if not found), call `db.invoice.update(...)`, then `revalidatePath` + `redirect`; on Prisma error return `{ error: message }`
+- [X] T016 [US2] Create `app/dashboard/update_invoice/[id]/page.tsx` — async Server Component; call `auth()` and redirect to `/login` if unauthenticated; fetch invoice with `db.invoice.findFirst({ where: { id: params.id, userId: session.user.id } })`; call `notFound()` if not found; convert `invoice.amount` from Prisma `Decimal` to `number` before passing; render `<CrudInvoice invoice={...} />` (edit mode — component pre-populates fields from prop via `defaultValues`)
+- [X] T017 [US2] Extend `CrudInvoice.tsx` to handle edit mode — when `invoice` prop is present, pass `defaultValues` to `useForm` from the invoice prop; bind `updateInvoice(invoice.id, data)` as the submit handler in edit mode and `createInvoice(data)` in create mode; no additional UI changes required
 
 **Checkpoint**: User Story 2 fully functional — edit flow works end-to-end; form pre-populates correctly; ownership guard prevents cross-user access; TypeScript strict mode passes
 
@@ -98,10 +98,10 @@
 
 ### Implementation for User Story 3
 
-- [ ] T018 [US3] Implement `deleteInvoice(id: string)` in `lib/actions/invoices.ts` — fetch invoice with `db.invoice.findFirst({ where: { id, userId } })`, guard that `status === 'PENDING'` (return `{ error }` otherwise), call `db.invoice.delete({ where: { id } })`, then `revalidatePath` + `redirect`; on Prisma error return `{ error: message }`
-- [ ] T019 [US3] Wire the Delete button in `InvoiceActionsCell.tsx` — import SweetAlert2 (`import Swal from 'sweetalert2'`); on click (only when `invoiceStatus === 'PENDING'`) show `Swal.fire({ title: '¿Eliminar factura?', showCancelButton: true, confirmButtonText: 'Eliminar', cancelButtonText: 'Cancelar' })`; on `result.isConfirmed` call `deleteInvoice(invoiceId)` inside `startTransition`; display any returned `{ error }` via a second `Swal.fire` error alert
-- [ ] T020 [P] [US3] Import SweetAlert2 CSS in the root client layout or in `InvoiceActionsCell.tsx` — `import 'sweetalert2/dist/sweetalert2.min.css'` (required for SweetAlert2 styles to appear; documented Tailwind exception per plan.md Complexity Tracking)
-- [ ] T021 [US3] Verify Delete icon `disabled` attribute and `aria-disabled` are correctly set in `InvoiceActionsCell.tsx` for non-PENDING invoices — confirm clicking the disabled button has no effect and no dialog opens
+- [X] T018 [US3] Implement `deleteInvoice(id: string)` in `lib/actions/invoices.ts` — fetch invoice with `db.invoice.findFirst({ where: { id, userId } })`, guard that `status === 'PENDING'` (return `{ error }` otherwise), call `db.invoice.delete({ where: { id } })`, then `revalidatePath` + `redirect`; on Prisma error return `{ error: message }`
+- [X] T019 [US3] Wire the Delete button in `InvoiceActionsCell.tsx` — import SweetAlert2 (`import Swal from 'sweetalert2'`); on click (only when `invoiceStatus === 'PENDING'`) show `Swal.fire({ title: '¿Eliminar factura?', showCancelButton: true, confirmButtonText: 'Eliminar', cancelButtonText: 'Cancelar' })`; on `result.isConfirmed` call `deleteInvoice(invoiceId)` inside `startTransition`; display any returned `{ error }` via a second `Swal.fire` error alert
+- [X] T020 [P] [US3] Import SweetAlert2 CSS in the root client layout or in `InvoiceActionsCell.tsx` — `import 'sweetalert2/dist/sweetalert2.min.css'` (required for SweetAlert2 styles to appear; documented Tailwind exception per plan.md Complexity Tracking)
+- [X] T021 [US3] Verify Delete icon `disabled` attribute and `aria-disabled` are correctly set in `InvoiceActionsCell.tsx` for non-PENDING invoices — confirm clicking the disabled button has no effect and no dialog opens
 
 **Checkpoint**: User Story 3 fully functional — SweetAlert2 confirmation works; only PENDING invoices can be deleted; disabled state enforced both UI and server-side
 
@@ -111,9 +111,9 @@
 
 **Purpose**: Final verification and cleanup across all user stories
 
-- [ ] T022 Run quickstart.md smoke test checklist end-to-end — verify all 7 manual steps pass (Add Invoice, create, Edit, update, Delete PENDING, Delete PAID disabled)
-- [ ] T023 [P] TypeScript compilation check — run `npx tsc --noEmit`; resolve any remaining strict-mode errors (no `any`, all props typed, Server Action return types explicit)
-- [ ] T024 [P] Confirm `InvoiceActionsCell` and `CrudInvoice` are the only files with `"use client"` directive in this feature — all page files (`create_invoice/page.tsx`, `update_invoice/[id]/page.tsx`) must be Server Components
+- [X] T022 Run quickstart.md smoke test checklist end-to-end — verify all 7 manual steps pass (Add Invoice, create, Edit, update, Delete PENDING, Delete PAID disabled)
+- [X] T023 [P] TypeScript compilation check — run `npx tsc --noEmit`; resolve any remaining strict-mode errors (no `any`, all props typed, Server Action return types explicit)
+- [X] T024 [P] Confirm `InvoiceActionsCell` and `CrudInvoice` are the only files with `"use client"` directive in this feature — all page files (`create_invoice/page.tsx`, `update_invoice/[id]/page.tsx`) must be Server Components
 
 **Checkpoint**: All four user stories tested independently; TypeScript clean; constitution compliant
 

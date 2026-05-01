@@ -10,7 +10,7 @@
 
 ## Step 1 — Install Shadcn/ui
 
-Run from the project root (requires existing `tailwind.config.ts` and `components/ui/` convention):
+Run from the project root (requires Tailwind CSS 4 + `@tailwindcss/postcss` and `components/ui/` convention):
 
 ```bash
 npx shadcn@latest init
@@ -41,7 +41,7 @@ versions after install:
 npm ls react-hook-form zod
 ```
 
-Expected: `react-hook-form@7.x`, `zod@3.22+`.
+Expected: `react-hook-form@7.x`, `zod@4.x`.
 
 ## Step 3 — Install SweetAlert2
 
@@ -55,13 +55,13 @@ classes because it is scoped to its overlay.
 
 ## Step 4 — Verify Zod Version
 
-`z.coerce.number()` and `z.coerce.date()` require Zod 3.20+. The stable recommended
-minimum is **3.22.0**. Check and upgrade if needed:
+The project uses Zod v4. Check the installed version:
 
 ```bash
 npm ls zod
-npm install zod@latest   # if < 3.22
 ```
+
+Expected: `zod@4.x`. If below v4, run `npm install zod@latest`.
 
 ## Step 5 — Validation Checklist
 

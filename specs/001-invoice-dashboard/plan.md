@@ -13,7 +13,7 @@ are protected by Auth.js middleware, and all styling uses Tailwind CSS.
 ## Technical Context
 
 **Language/Version**: TypeScript 5.x (strict mode)
-**Primary Dependencies**: Next.js 15 (App Router), Prisma 7, Auth.js v5 (NextAuth), Tailwind CSS 3, `pg` + `@prisma/adapter-pg` (driver adapter)
+**Primary Dependencies**: Next.js 15 (App Router), Prisma 7, Auth.js v5 (NextAuth), Tailwind CSS 4 (`@tailwindcss/postcss`), `pg` + `@prisma/adapter-pg` (driver adapter)
 **Storage**: PostgreSQL via Prisma ORM
 **Testing**: Playwright for e2e (if requested); TypeScript compiler as primary correctness gate
 **Target Platform**: Web — server-rendered, modern browsers
