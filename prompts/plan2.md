@@ -1,0 +1,3 @@
+- Usa la libreria Shadcn para la edicion de registros en la aplicacion.
+- Usa la libreria Zod para su validacion de formularios de edicion de registros, verifica las versiones que funciones para validaciones complejas de datos numericos y de tipo fecha.
+- Usa la libreria SweetAlert para enviar alertas y ventanas de dialogo al usuario.
