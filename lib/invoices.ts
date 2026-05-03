@@ -8,6 +8,7 @@ export interface InvoiceSummary {
   dueDate: string
   issuedAt: string
   description: string | null
+  userName: string | null
 }
 
 export interface InvoiceDetail extends InvoiceSummary {
@@ -28,6 +29,7 @@ export async function getInvoices(userId: string): Promise<InvoiceSummary[]> {
       dueDate: true,
       issuedAt: true,
       description: true,
+      user: { select: { name: true } },
     },
   })
 
@@ -39,6 +41,7 @@ export async function getInvoices(userId: string): Promise<InvoiceSummary[]> {
     dueDate: inv.dueDate.toISOString(),
     issuedAt: inv.issuedAt.toISOString(),
     description: inv.description,
+    userName: inv.user.name ?? null,
   }))
 }
 
@@ -48,6 +51,7 @@ export async function getInvoiceById(
 ): Promise<InvoiceDetail | null> {
   const invoice = await db.invoice.findFirst({
     where: { id: invoiceId, userId },
+    include: { user: { select: { name: true } } },
   })
 
   if (!invoice) return null
@@ -60,6 +64,7 @@ export async function getInvoiceById(
     dueDate: invoice.dueDate.toISOString(),
     issuedAt: invoice.issuedAt.toISOString(),
     description: invoice.description,
+    userName: invoice.user.name ?? null,
     createdAt: invoice.createdAt.toISOString(),
     updatedAt: invoice.updatedAt.toISOString(),
   }
