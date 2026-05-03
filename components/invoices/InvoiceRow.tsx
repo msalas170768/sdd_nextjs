@@ -1,4 +1,3 @@
-import Link from 'next/link'
 import type { InvoiceSummary } from '@/lib/invoices'
 import InvoiceActionsCell from './InvoiceActionsCell'
 
@@ -15,16 +14,11 @@ const statusColors: Record<InvoiceSummary['status'], string> = {
 export default function InvoiceRow({ invoice }: InvoiceRowProps) {
   return (
     <tr className="hover:bg-gray-50 transition-colors">
-      <td className="px-4 py-3 text-sm font-mono text-gray-600">
-        <Link
-          href={`/dashboard/invoices/${invoice.id}`}
-          className="text-blue-600 hover:underline"
-        >
-          {invoice.id.slice(0, 8)}…
-        </Link>
-      </td>
       <td className="px-4 py-3 text-sm text-gray-900">
         {invoice.currency} {Number(invoice.amount).toFixed(2)}
+      </td>
+      <td className="px-4 py-3 text-sm text-gray-600 max-w-50 truncate">
+        {invoice.description ?? ''}
       </td>
       <td className="px-4 py-3">
         <span
@@ -38,6 +32,9 @@ export default function InvoiceRow({ invoice }: InvoiceRowProps) {
       </td>
       <td className="px-4 py-3 text-sm text-gray-600">
         {new Date(invoice.issuedAt).toLocaleDateString()}
+      </td>
+      <td className="px-4 py-3 text-sm text-gray-600">
+        {invoice.userName ?? '—'}
       </td>
       <td className="px-4 py-3">
         <InvoiceActionsCell invoiceId={invoice.id} invoiceStatus={invoice.status} />
